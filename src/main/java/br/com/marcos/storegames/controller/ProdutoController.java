@@ -1,9 +1,11 @@
-package br.com.marcos.blogpessoal.controller;
+package br.com.marcos.storegames.controller;
 
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,9 +16,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.server.ResponseStatusException;
 
-import br.com.marcos.blogpessoal.entity.Produto;
-import br.com.marcos.blogpessoal.repository.ProdutoRepository;
+import br.com.marcos.storegames.entity.Categoria;
+import br.com.marcos.storegames.entity.Produto;
+import br.com.marcos.storegames.repository.CategoriaRepository;
+import br.com.marcos.storegames.repository.ProdutoRepository;
 import jakarta.validation.Valid;
 
 @RestController
@@ -26,6 +32,9 @@ public class ProdutoController {
 	
 	@Autowired
 	private ProdutoRepository produtoRepository;
+	
+	@Autowired
+	private CategoriaRepository categoriaRepository;
 	
 	@GetMapping
 	public ResponseEntity<List<Produto>> getAll() {
@@ -51,18 +60,28 @@ public class ProdutoController {
 	@PostMapping
 	public ResponseEntity<Produto> postProduto (@Valid @RequestBody Produto produto) {
 		
-		return ResponseEntity.status(201).body(produtoRepository.save(produto));
+		Optional<Categoria> categoria = categoriaRepository.findById(produto.getCategoria().getId());
+		if (categoria.isPresent()) {
+			return ResponseEntity.status(201).body(produtoRepository.save(produto));
+		}
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe nenhuma categoria associada à este ID!.");
 	}
 	
 	@PutMapping
 	public ResponseEntity<Produto> putProduto (@Valid @RequestBody Produto produto) {
 		
-		Optional<Produto> findProduto = produtoRepository.findById(produto.getId());
+		Optional<Categoria> findCategoria = categoriaRepository.findById(produto.getCategoria().getId());
 		
-		if (findProduto.isPresent()) {
-			return ResponseEntity.status(201).body(produtoRepository.save(produto));
+		if (findCategoria.isPresent()) {
+		
+			Optional<Produto> findProduto = produtoRepository.findById(produto.getId());
+			
+			if (findProduto.isPresent()) {
+				return ResponseEntity.status(201).body(produtoRepository.save(produto));
+			}
+			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.notFound().build();
+		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Não existe nenhuma categoria associada à este ID!");
 	}
 	
 	@DeleteMapping("/id/{id}")

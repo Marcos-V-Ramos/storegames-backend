@@ -1,9 +1,15 @@
-package br.com.marcos.blogpessoal.entity;
+package br.com.marcos.storegames.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +41,10 @@ public class Produto {
 	@NotBlank(message = "O atributo codigo é obrigatório.")
 	@Size(min = 5, max = 30, message = "O atributo codigo deve ter entre 5 e 30 caracteres.")
 	private String codigo;
+	
+	@ManyToOne
+	@JsonIgnoreProperties("produtos")
+	private Categoria categoria;
 	
 	public Long getId() {
 		return id;
@@ -90,5 +100,13 @@ public class Produto {
 
 	public void setEstoque(int estoque) {
 		this.estoque = estoque;
+	}
+
+	public Categoria getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
 	}
 }

@@ -1,4 +1,4 @@
-package br.com.marcos.blogpessoal;
+package br.com.marcos.storegames;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -1,4 +1,4 @@
-package br.com.marcos.blogpessoal.controller;
+package br.com.marcos.storegames.controller;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.marcos.blogpessoal.entity.Categoria;
-import br.com.marcos.blogpessoal.repository.CategoriaRepository;
+import br.com.marcos.storegames.entity.Categoria;
+import br.com.marcos.storegames.repository.CategoriaRepository;
 import jakarta.validation.Valid;
 
 @RestController
